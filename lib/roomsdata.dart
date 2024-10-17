@@ -1,6 +1,6 @@
 Map<String, dynamic> buildings = {
   "Resource center": {
-    "Ground Flow": {
+    "Ground Floow": {
       "RC1": {
         "Location": [-0.397888, 36.961032, 1766.5999],
         "type": "class",
@@ -301,7 +301,7 @@ Map<String, dynamic> buildings = {
       },
       "RC19": {
         "Location": [-0.3981004, 36.9607777, 1777],
-        "type": "office",
+        "type": "class",
         "occupants": [],
         "vacant": true,
       },

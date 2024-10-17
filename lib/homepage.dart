@@ -1,6 +1,7 @@
 import 'package:class_occupation_system/directions.dart';
 import 'package:class_occupation_system/main.dart';
 import 'package:class_occupation_system/reservepage.dart';
+import 'package:class_occupation_system/roomsdata.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:location/location.dart';
@@ -36,7 +37,7 @@ Future getlocation() async {
   _locationData = await location.getLocation();
 }
 
-ValueNotifier valuechange = ValueNotifier(0);
+ValueNotifier valuechange = ValueNotifier(true);
 bool themevalue = true;
 TextEditingController searchcontroller = TextEditingController();
 List<String> pages = [
@@ -133,6 +134,19 @@ void themechange(BuildContext context) async {
   print("lllllllllllllllll");
 }
 
+Map<int, dynamic> filtered_names = {};
+void searchfunction(String search) async {
+  List names = filtered_names[current_page];
+  //List toremove = List.empty(growable: true);
+  for (var name in names) {
+    if (!name.toLowerCase().contains(search)) {
+      await filtered_names[current_page].removeWhere((item) => item == name);
+    }
+  }
+  print("..........................$filtered_names");
+  print(names);
+}
+
 class _HomepageState extends State<Homepage> {
   @override
   void initState() {
@@ -140,7 +154,7 @@ class _HomepageState extends State<Homepage> {
     pageController.addListener(
       () {
         current_page = pageController.page!.ceil();
-        valuechange.value++;
+        valuechange.value = !valuechange.value;
       },
     );
     getlocation();
@@ -152,6 +166,10 @@ class _HomepageState extends State<Homepage> {
         .changeSettings(accuracy: LocationAccuracy.high, interval: 10);
     super.initState();
   }
+
+  int office_num = 0;
+  TextEditingController searchController = TextEditingController();
+  ValueNotifier onsearch = ValueNotifier(true);
 
   @override
   Widget build(BuildContext context) {
@@ -183,9 +201,13 @@ class _HomepageState extends State<Homepage> {
         body: Column(
           children: [
             SearchBar(
-              controller: TextEditingController(),
+              controller: searchController,
               leading: const Icon(Icons.search),
               hintText: "Search rooms ",
+              onChanged: (value) {
+                searchfunction(value);
+                onsearch.value != onsearch.value;
+              },
             ),
             // SizedBox(
             //   height: 50,
@@ -244,51 +266,98 @@ class _HomepageState extends State<Homepage> {
                 controller: pageController,
                 children: [
                   //offices
-                  ListView.builder(
-                    itemCount: 10,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(4.0),
-                        child: InkWell(
-                          onTap: () {
-                            showWindow(context, "final");
-                          },
-                          enableFeedback: false,
-                          child: Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                color: const Color.fromARGB(117, 123, 123, 123),
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: MediaQuery.of(context).size.width *
-                                      (2 / 3),
-                                  child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text("Finance office "),
-                                      Text(
-                                          overflow: TextOverflow.ellipsis,
-                                          "Office:  Resource center, first floor, left side")
-                                    ],
+                  Builder(builder: (context) {
+                    office_num = 0;
+                    List office_names = [];
+                    buildings.forEach((key, value) {
+                      value.forEach((key1, value1) {
+                        value1.forEach((key2, value2) {
+                          if (value2.containsValue("office")) {
+                            office_num++;
+                            // print(office_num);
+                            office_names.add(key2);
+                          }
+                        });
+                      });
+                    });
+                    filtered_names.remove(0);
+                    filtered_names.addAll({0: office_names});
+                    //print("pppppppppppp....=${office_num}");
+                    return ListenableBuilder(
+                        listenable: onsearch,
+                        builder: (context, child) {
+                          return ListView.builder(
+                            itemCount: filtered_names[0].length,
+                            itemBuilder: (BuildContext context, int index) {
+                              String office_name = filtered_names[0][index];
+                              String position = "";
+                              bool vacant = false;
+                              buildings.forEach((key, value) {
+                                value.forEach((key1, value1) {
+                                  value1.forEach((key2, value2) {
+                                    if (key2 == office_name) {
+                                      position = "$key,$key1,$key2";
+                                      if (value2.containsValue(true)) {
+                                        vacant = true;
+                                      }
+                                    }
+                                  });
+                                });
+                              });
+                              return Padding(
+                                padding: const EdgeInsets.all(4.0),
+                                child: InkWell(
+                                  onTap: () {
+                                    showWindow(context, "final");
+                                  },
+                                  enableFeedback: false,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(10),
+                                    decoration: BoxDecoration(
+                                        color: const Color.fromARGB(
+                                            117, 123, 123, 123),
+                                        borderRadius:
+                                            BorderRadius.circular(10)),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              (2 / 3),
+                                          child: Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceAround,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(office_name),
+                                              Text(
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  "Office:  $position")
+                                            ],
+                                          ),
+                                        ),
+                                        Text(
+                                          vacant ? "Vacant" : "Ocuppied",
+                                          style: TextStyle(
+                                              color: vacant
+                                                  ? const Color.fromARGB(
+                                                      255, 25, 0, 255)
+                                                  : Colors.red),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
-                                Text(
-                                  "Ocuppied",
-                                  style: TextStyle(color: Colors.red),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+                              );
+                            },
+                          );
+                        });
+                  }),
                   //labs
                   ListView.builder(
                     itemCount: 10,

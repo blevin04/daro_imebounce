@@ -1,7 +1,12 @@
 import 'package:class_occupation_system/homepage.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  await Hive.openBox("theme");
   runApp(const MyApp());
 }
 
@@ -16,8 +21,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  ThemeMode _themeMode = ThemeMode.light;
-  void changeTheme(ThemeMode themeMode) {
+  ThemeMode _themeMode = Hive.box("theme").isEmpty
+      ? ThemeMode.light
+      : Hive.box("theme").get("theme") == 0
+          ? ThemeMode.dark
+          : ThemeMode.light;
+  void changeTheme(ThemeMode themeMode) async {
     setState(() {
       _themeMode = themeMode;
     });

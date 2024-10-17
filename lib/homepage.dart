@@ -2,6 +2,7 @@ import 'package:class_occupation_system/directions.dart';
 import 'package:class_occupation_system/main.dart';
 import 'package:class_occupation_system/reservepage.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 import 'package:location/location.dart';
 
 class Homepage extends StatefulWidget {
@@ -36,7 +37,7 @@ Future getlocation() async {
 }
 
 ValueNotifier valuechange = ValueNotifier(0);
-bool themevalue = false;
+bool themevalue = true;
 TextEditingController searchcontroller = TextEditingController();
 List<String> pages = [
   "Offices",
@@ -122,6 +123,16 @@ void showWindow(
       });
 }
 
+void themechange(BuildContext context) async {
+  await Hive.box("theme").clear();
+  if (themevalue) {
+    await Hive.box("theme").put("theme", 1);
+  } else {
+    await Hive.box("theme").put("theme", 0);
+  }
+  print("lllllllllllllllll");
+}
+
 class _HomepageState extends State<Homepage> {
   @override
   void initState() {
@@ -153,6 +164,7 @@ class _HomepageState extends State<Homepage> {
               builder: (BuildContext context, setStatetheme) {
                 return IconButton(
                     onPressed: () {
+                      themechange(context);
                       if (themevalue) {
                         MyApp.of(context)!.changeTheme(ThemeMode.dark);
                       } else {
@@ -250,14 +262,21 @@ class _HomepageState extends State<Homepage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("Finance office "),
-                                    Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        "Office:  Resource center, first floor, left side")
-                                  ],
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      (2 / 3),
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("Finance office "),
+                                      Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          "Office:  Resource center, first floor, left side")
+                                    ],
+                                  ),
                                 ),
                                 Text(
                                   "Ocuppied",
@@ -289,14 +308,19 @@ class _HomepageState extends State<Homepage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("mechatronics lab 1 "),
-                                    Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        "lab:  School of engineering, ground floor, left side")
-                                  ],
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      (2 / 3),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("mechatronics lab 1 "),
+                                      Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          "lab:  School of engineering, ground floor, left side")
+                                    ],
+                                  ),
                                 ),
                                 Text(
                                   "Ocuppied",
@@ -329,14 +353,19 @@ class _HomepageState extends State<Homepage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("RC 18 "),
-                                    Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        "Class:  Resource center, first floor, left side")
-                                  ],
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      (2 / 3),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("RC 18 "),
+                                      Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          "Class:  Resource center, first floor, left side")
+                                    ],
+                                  ),
                                 ),
                                 Text(
                                   "Ocuppied",
@@ -369,14 +398,19 @@ class _HomepageState extends State<Homepage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("satima hall"),
-                                    Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        "Lecture Hall:  Resource center, first floor, left side")
-                                  ],
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      (2 / 3),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("satima hall"),
+                                      Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          "Lecture Hall:  Resource center, first floor, left side")
+                                    ],
+                                  ),
                                 ),
                                 Text("vacant",
                                     style: TextStyle(
@@ -408,14 +442,19 @@ class _HomepageState extends State<Homepage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text("B7"),
-                                    Text(
-                                        overflow: TextOverflow.ellipsis,
-                                        "Class:  Soe, first floor, left side")
-                                  ],
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      (2 / 3),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text("B7"),
+                                      Text(
+                                          overflow: TextOverflow.ellipsis,
+                                          "Class:  Soe, first floor, left side")
+                                    ],
+                                  ),
                                 ),
                                 Text(
                                   "Ocuppied",
@@ -439,7 +478,6 @@ class _HomepageState extends State<Homepage> {
                     child: CircularProgressIndicator(),
                   );
                 }
-
                 return StreamBuilder(
                   stream: Location.instance.onLocationChanged,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {

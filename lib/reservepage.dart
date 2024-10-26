@@ -93,8 +93,8 @@ class Reservepage extends StatelessWidget {
                   hintText: "Duration ",
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                          color: const Color.fromARGB(255, 174, 174, 174)))),
+                      borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 174, 174, 174)))),
             ),
             const SizedBox(
               height: 20,

@@ -134,15 +134,33 @@ void themechange(BuildContext context) async {
   print("lllllllllllllllll");
 }
 
+List office_names = [];
 Map<int, dynamic> filtered_names = {};
 void searchfunction(String search) async {
-  List names = filtered_names[current_page];
-  //List toremove = List.empty(growable: true);
-  for (var name in names) {
-    if (!name.toLowerCase().contains(search)) {
-      await filtered_names[current_page].removeWhere((item) => item == name);
+  //filtered_names[current_page].clear();
+  filtered_names[0] = office_names;
+  final names = filtered_names[current_page];
+  print("...........................mmmm${filtered_names}");
+  List toremove = List.empty(growable: true);
+  //final range = filtered_names[current_page].length;
+
+  filtered_names[current_page].forEach((val) {
+    if (!val.toLowerCase().contains(search)) {
+      toremove.add(val);
+      print(val);
+    }
+  });
+  if (search.isNotEmpty) {
+    for (var i = 0; i < toremove.length; i++) {
+      filtered_names[current_page].remove(toremove[i]);
     }
   }
+  // for (var name in names) {
+  //   if (!name.toLowerCase().contains(search)) {
+  //     await
+  //   }
+  // }
+
   print("..........................$filtered_names");
   print(names);
 }
@@ -206,7 +224,13 @@ class _HomepageState extends State<Homepage> {
               hintText: "Search rooms ",
               onChanged: (value) {
                 searchfunction(value);
-                onsearch.value != onsearch.value;
+                print(onsearch.value);
+                if (onsearch.value == true) {
+                  //print("///////////////////////////////////");
+                  onsearch.value = false;
+                } else {
+                  onsearch.value = true;
+                }
               },
             ),
             // SizedBox(
@@ -268,7 +292,7 @@ class _HomepageState extends State<Homepage> {
                   //offices
                   Builder(builder: (context) {
                     office_num = 0;
-                    List office_names = [];
+
                     buildings.forEach((key, value) {
                       value.forEach((key1, value1) {
                         value1.forEach((key2, value2) {
@@ -286,6 +310,7 @@ class _HomepageState extends State<Homepage> {
                     return ListenableBuilder(
                         listenable: onsearch,
                         builder: (context, child) {
+                          print("onrefresssssssssssssssssssssss");
                           return ListView.builder(
                             itemCount: filtered_names[0].length,
                             itemBuilder: (BuildContext context, int index) {
